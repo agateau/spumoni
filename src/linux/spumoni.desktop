@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=SpumoNI
+GenericName=Application template
+Comment=A simple Qt based application template
+Type=Application
+Exec=spumoni
+Icon=spumoni
+Terminal=false
+Categories=Qt;Utility;

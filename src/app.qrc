@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>appicon/sc-apps-spumoni.svg</file>
+        <file>icons/application-exit.svg</file>
+    </qresource>
+</RCC>
