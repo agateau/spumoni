@@ -24,13 +24,21 @@ EOF
 }
 
 status() {
+    local icons=(kde document-open gwenview kwrite)
+    local icon_count=${#icons[@]}
+    local icon=${icons[RANDOM % icon_count]}
     cat <<EOF
 {
-    "iconName": "kde",
+    "iconName": "$icon",
     "toolTipText": "Example",
-    "refresh": 0
+    "refresh": 100
 }
 EOF
+}
+
+activate() {
+    local reason=$1
+    kdialog --msgbox $reason
 }
 
 action="USAGE"
@@ -40,6 +48,11 @@ while [ $# -gt 0 ] ; do
         ;;
     --status)
         action="STATUS"
+        ;;
+    --activate)
+        action="ACTIVATE"
+        reason=$2
+        shift
         ;;
     *)
         usage "Unknown option '$1'"
@@ -54,5 +67,8 @@ USAGE)
     ;;
 STATUS)
     status
+    ;;
+ACTIVATE)
+    activate $reason
     ;;
 esac
