@@ -15,6 +15,7 @@ public:
 
 private:
     void updateStatus();
+    void onActivated(QSystemTrayIcon::ActivationReason reason);
 
     const std::unique_ptr<CommandRunner> mRunner;
     const QString mCommand;

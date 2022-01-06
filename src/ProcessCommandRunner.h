@@ -9,6 +9,7 @@ class ProcessCommandRunner : public CommandRunner {
 public:
     explicit ProcessCommandRunner(const QString& cmd);
     QJsonDocument run(const QStringList& args) const override;
+    void detachedRun(const QStringList& args) const override;
 
 private:
     const QString mCommand;

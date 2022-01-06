@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QJsonDocument>
+#include <QJsonParseError>
 #include <QProcess>
 
 ProcessCommandRunner::ProcessCommandRunner(const QString& command) : mCommand(command) {
@@ -9,7 +10,12 @@ ProcessCommandRunner::ProcessCommandRunner(const QString& command) : mCommand(co
 
 QJsonDocument ProcessCommandRunner::run(const QStringList& arguments) const {
     QProcess process;
+    // TODO: Check mCommand exists
     process.start(mCommand, arguments);
+    if (!process.waitForStarted(500)) {
+        qWarning() << "Could not start command" << mCommand << arguments;
+        return {};
+    }
     auto ok = process.waitForFinished(1000);
     if (!ok) {
         qWarning() << "Process did not finish in time";
@@ -17,5 +23,16 @@ QJsonDocument ProcessCommandRunner::run(const QStringList& arguments) const {
     }
     auto output = process.readAllStandardOutput();
 
-    return QJsonDocument::fromJson(output);
+    QJsonParseError error;
+    auto doc = QJsonDocument::fromJson(output, &error);
+    if (error.error != QJsonParseError::NoError) {
+        qWarning() << "Invalid JSON received from" << arguments;
+        qWarning() << "Error:" << error.errorString();
+        qWarning() << "Content:" << output;
+    }
+    return doc;
+}
+
+void ProcessCommandRunner::detachedRun(const QStringList& arguments) const {
+    QProcess::startDetached(mCommand, arguments);
 }

@@ -9,6 +9,7 @@ public:
     virtual ~CommandRunner();
 
     virtual QJsonDocument run(const QStringList& args) const = 0;
+    virtual void detachedRun(const QStringList& args) const = 0;
 };
 
 #endif /* COMMANDRUNNER_H */

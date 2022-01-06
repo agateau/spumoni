@@ -32,7 +32,7 @@ Easily create StatusNotifierItem apps using any language.
 }
 ```
 
-### --activate (L|M|R)
+### --activate (main|middle|context)
 
 ### --activate-menu <id>
 
