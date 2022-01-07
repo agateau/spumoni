@@ -41,18 +41,18 @@ activate() {
     kdialog --msgbox $reason
 }
 
-action="USAGE"
 while [ $# -gt 0 ] ; do
     case "$1" in
     -h|--help)
         ;;
     --status)
-        action="STATUS"
+        status
+        exit
         ;;
     --activate)
-        action="ACTIVATE"
-        reason=$2
-        shift
+        activate "$2"
+        exit
+        ;;
         ;;
     *)
         usage "Unknown option '$1'"
@@ -60,15 +60,3 @@ while [ $# -gt 0 ] ; do
     esac
     shift
 done
-
-case "$action" in
-USAGE)
-    usage
-    ;;
-STATUS)
-    status
-    ;;
-ACTIVATE)
-    activate $reason
-    ;;
-esac
