@@ -31,7 +31,17 @@ status() {
 {
     "iconName": "$icon",
     "toolTipText": "Example",
-    "refresh": 100
+    "refresh": 100,
+    "actions": [
+        {
+            "id": "hello",
+            "text": "Hello"
+        },
+        {
+            "id": "world",
+            "text": "World"
+        }
+    ]
 }
 EOF
 }
@@ -39,6 +49,11 @@ EOF
 activate() {
     local reason=$1
     kdialog --msgbox $reason
+}
+
+activate_action() {
+    local id=$1
+    kdialog --msgbox "Action $id"
 }
 
 while [ $# -gt 0 ] ; do
@@ -53,6 +68,9 @@ while [ $# -gt 0 ] ; do
         activate "$2"
         exit
         ;;
+    --activate-action)
+        activate_action "$2"
+        exit
         ;;
     *)
         usage "Unknown option '$1'"

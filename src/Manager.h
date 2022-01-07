@@ -1,6 +1,8 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include <QJsonArray>
+#include <QMenu>
 #include <QObject>
 #include <QSystemTrayIcon>
 
@@ -8,18 +10,24 @@
 
 class CommandRunner;
 
+class QAction;
+
 class Manager : public QObject {
 public:
     explicit Manager(std::unique_ptr<CommandRunner> runner);
     ~Manager();
 
 private:
-    void updateStatus();
+    void refresh();
     void onActivated(QSystemTrayIcon::ActivationReason reason);
+    void onMenuTriggered(QAction* action);
+    void onAboutToShowMenu();
 
     const std::unique_ptr<CommandRunner> mRunner;
     const QString mCommand;
     QSystemTrayIcon mIcon;
+    QMenu mMenu;
+    QJsonArray mPendingMenuDefinition;
 };
 
 #endif /* MANAGER_H */
