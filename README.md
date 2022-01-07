@@ -13,28 +13,21 @@ Easily create StatusNotifierItem apps using any language.
 ```json
 {
     "iconName": "",
-    "toolTipText": "",
+    "text": "",
     "refresh": int // interval in seconds, 0 = no refresh
-}
-```
-
-### --menu
-
-```json
-{
     "actions": [
         {
             "id": "",
             "text": "",
-            "iconName": "",
+            "iconName": ""
         }
     ]
 }
 ```
 
-### --activate (main|middle|context)
+### --activate (primary|secondary|increase|decrease)
 
-### --activate-menu <id>
+### --activate-action <id>
 
 ## Building it
 

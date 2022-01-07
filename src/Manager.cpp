@@ -60,14 +60,13 @@ void Manager::onActivated(QSystemTrayIcon::ActivationReason reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::Unknown:
     case QSystemTrayIcon::DoubleClick:
-        reasonStr = "main";
+        reasonStr = "primary";
         break;
     case QSystemTrayIcon::MiddleClick:
-        reasonStr = "middle";
+        reasonStr = "secondary";
         break;
     case QSystemTrayIcon::Context:
-        reasonStr = "context";
-        break;
+        return;
     }
 
     mRunner->detachedRun({"--activate", reasonStr});
