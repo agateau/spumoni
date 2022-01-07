@@ -15,6 +15,19 @@ Manager::Manager(std::unique_ptr<CommandRunner> runner) : mRunner(std::move(runn
 Manager::~Manager() {
 }
 
+static QIcon loadIcon(const QString& iconName) {
+    if (QIcon::hasThemeIcon(iconName)) {
+        return QIcon::fromTheme(iconName);
+    }
+    QPixmap pixmap(iconName);
+    if (pixmap.isNull()) {
+        qWarning() << "Could not decode icon" << iconName;
+        // TODO: use fallback icon
+        return {};
+    }
+    return QIcon(pixmap);
+}
+
 void Manager::updateStatus() {
     auto doc = mRunner->run({"--status"});
     if (!doc.isObject()) {
@@ -34,20 +47,10 @@ void Manager::updateStatus() {
         mIcon.hide();
         return;
     }
-    QIcon icon;
-    if (QIcon::hasThemeIcon(iconName)) {
-        icon = QIcon::fromTheme(iconName);
-    } else {
-        QPixmap pixmap(iconName);
-        if (pixmap.isNull()) {
-            qWarning() << "Could not decode icon" << iconName;
-            // TODO: use fallback icon
-        } else {
-            icon = QIcon(pixmap);
-        }
-    }
-    mIcon.setIcon(icon);
+
+    mIcon.setIcon(loadIcon(iconName));
     mIcon.setToolTip(toolTipText);
+
     mIcon.show();
 }
 
