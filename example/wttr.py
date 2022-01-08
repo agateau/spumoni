@@ -4,8 +4,9 @@ Doc
 """
 import argparse
 import json
-import sys
+import locale
 import urllib.request
+import sys
 
 
 WWO_CODE = {
@@ -85,8 +86,21 @@ def icon_for_code(code: str) -> str:
     return "weather-" + ICON_FOR_WWO[WWO_CODE[code]]
 
 
+def get_lang() -> str:
+    default_locale = locale.getdefaultlocale()[0]
+    if "_" not in default_locale:
+        return "en"
+    return default_locale.split("_")[0]
+
+
+def get_base_url(city: str) -> str:
+    lang = get_lang()
+    return f"https://wttr.in/{city}?lang={lang}"
+
+
 def do_status(city: str):
-    wttr_url = f"https://wttr.in/{city}?format=j1"
+    lang = get_lang()
+    wttr_url = get_base_url(city) + "&format=j1"
     response = urllib.request.urlopen(wttr_url)
     dct = json.loads(response.read())
     data = dct["current_condition"][0]
@@ -94,7 +108,11 @@ def do_status(city: str):
     code = data["weatherCode"]
     icon = icon_for_code(code)
 
-    desc = data["weatherDesc"][0]["value"]
+    # If a translated entry exists, it's called "lang_$LANG". If it's not
+    # there, fall back to "weatherDesc".
+    desc_obj = data.get(f"lang_{lang}", "weatherDesc")
+    desc = desc_obj[0]["value"]
+
     temp_c = data["temp_C"]
     tooltip = f"{temp_c}°C, {desc}"
 
