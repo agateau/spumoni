@@ -9,35 +9,46 @@ ProcessCommandRunner::ProcessCommandRunner(const QString& command, const QString
         : mCommand(command), mArguments(argments) {
 }
 
-QJsonDocument ProcessCommandRunner::run(const QStringList& arguments_) const {
+CommandRunner::RunResult ProcessCommandRunner::run(const QStringList& arguments_) const {
     QProcess process;
 
     auto arguments = mArguments + arguments_;
 
-    // TODO: Check mCommand exists
     process.start(mCommand, arguments);
     if (!process.waitForStarted(500)) {
-        qWarning() << "Could not start command" << mCommand << arguments;
-        return {};
+        return CommandError::FailedToStart;
     }
     auto ok = process.waitForFinished(1000);
     if (!ok) {
-        qWarning() << "Process did not finish in time";
-        return {};
+        return CommandError::Timeout;
     }
     auto output = process.readAllStandardOutput();
+    if (process.exitCode() != 0) {
+        auto out = QString::fromUtf8(output);
+        auto err = QString::fromUtf8(process.readAllStandardError());
+        auto details = tr("Command failed with exit code %1."
+                          "\nout:\n%2"
+                          "\nerr:\n%3")
+                           .arg(process.exitCode())
+                           .arg(out)
+                           .arg(err);
+        return CommandError(CommandError::Failed, details);
+    }
 
     QJsonParseError error;
     auto doc = QJsonDocument::fromJson(output, &error);
     if (error.error != QJsonParseError::NoError) {
-        qWarning() << "Invalid JSON received from" << arguments;
-        qWarning() << "Error:" << error.errorString();
-        qWarning() << "Content:" << output;
+        auto details = QString("Invalid JSON: %1.\nOutput:\n%2")
+                           .arg(error.errorString(), QString::fromUtf8(output));
+        return CommandError(CommandError::InvalidJson, details);
     }
     return doc;
 }
 
-void ProcessCommandRunner::detachedRun(const QStringList& arguments_) const {
+std::optional<CommandError> ProcessCommandRunner::detachedRun(const QStringList& arguments_) const {
     auto arguments = mArguments + arguments_;
-    QProcess::startDetached(mCommand, arguments);
+    if (!QProcess::startDetached(mCommand, arguments)) {
+        return CommandError::FailedToStart;
+    }
+    return {};
 }

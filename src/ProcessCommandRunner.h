@@ -3,14 +3,16 @@
 
 #include "CommandRunner.h"
 
+#include <QObject>
 #include <QString>
 #include <QStringList>
 
-class ProcessCommandRunner : public CommandRunner {
+class ProcessCommandRunner : public QObject, public CommandRunner {
+    Q_OBJECT
 public:
     explicit ProcessCommandRunner(const QString& cmd, const QStringList& arguments);
-    QJsonDocument run(const QStringList& args) const override;
-    void detachedRun(const QStringList& args) const override;
+    RunResult run(const QStringList& args) const override;
+    std::optional<CommandError> detachedRun(const QStringList& args) const override;
 
 private:
     const QString mCommand;

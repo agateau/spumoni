@@ -67,7 +67,12 @@ Manager::~Manager() {
 }
 
 void Manager::refresh() {
-    auto doc = mRunner->run({"--status"});
+    auto result = mRunner->run({"--status"});
+    if (auto* error = std::get_if<CommandError>(&result)) {
+        showCommandError(*error);
+        return;
+    }
+    auto doc = std::get<QJsonDocument>(result);
     if (!doc.isObject()) {
         return;
     }
@@ -113,4 +118,23 @@ void Manager::onMenuTriggered(QAction* action) {
         return;
     }
     mRunner->detachedRun({"--activate-action", id});
+}
+
+void Manager::showCommandError(const CommandError& error) {
+    QString message;
+    switch (error.code) {
+    case CommandError::FailedToStart:
+        message = tr("Command failed to start");
+        break;
+    case CommandError::Failed:
+        message = tr("Command failed");
+        break;
+    case CommandError::Timeout:
+        message = tr("Command ran for too long");
+        break;
+    case CommandError::InvalidJson:
+        message = tr("Command returned invalid JSON");
+        break;
+    }
+    mIcon.showMessage(message, error.details, "error");
 }
