@@ -24,7 +24,7 @@ EOF
 }
 
 status() {
-    local icons=(kde document-open gwenview kwrite)
+    local icons=(face-angel face-clown face-in-love face-laughing)
     local icon_count=${#icons[@]}
     local icon=${icons[RANDOM % icon_count]}
     cat <<EOF
