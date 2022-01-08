@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Doc
+Spumoni app to show the weather, using https://wttr.in API.
 """
 import argparse
 import json
@@ -135,7 +135,8 @@ def main():
 
     parser.add_argument("--activate")
     parser.add_argument("--status", action="store_true")
-    parser.add_argument("city")
+    parser.add_argument("city", nargs="?", default="",
+                        help="Name of the city to show weather for")
 
     args = parser.parse_args()
 
