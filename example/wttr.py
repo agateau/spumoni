@@ -7,6 +7,7 @@ import json
 import locale
 import urllib.request
 import sys
+import webbrowser
 
 
 WWO_CODE = {
@@ -124,8 +125,8 @@ def do_status(city: str):
     print(json.dumps(out))
 
 
-def do_activate():
-    pass
+def do_activate(city: str):
+    webbrowser.open_new_tab(get_base_url(city))
 
 
 def main():
@@ -142,8 +143,8 @@ def main():
 
     if args.status:
         return do_status(args.city)
-    if args.activate:
-        return do_activate(args.activate)
+    if args.activate == "primary":
+        return do_activate(args.city)
 
     return 0
 
