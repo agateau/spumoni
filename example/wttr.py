@@ -120,7 +120,7 @@ def do_status(city: str):
     out = {
         "iconName": icon,
         "toolTipText": tooltip,
-        "refresh": 3_600_000,
+        "refresh": 3_600,
     }
     print(json.dumps(out))
 

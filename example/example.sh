@@ -31,7 +31,7 @@ status() {
 {
     "iconName": "$icon",
     "toolTipText": "Example",
-    "refresh": 100,
+    "refresh": 0.2,
     "actions": [
         {
             "id": "hello",

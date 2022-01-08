@@ -14,7 +14,7 @@ Easily create StatusNotifierItem apps using any language.
 {
     "iconName": "",
     "text": "",
-    "refresh": int // interval in seconds, 0 = no refresh
+    "refresh": double // interval in seconds, 0 = no refresh
     "actions": [
         {
             "id": "",

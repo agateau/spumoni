@@ -78,9 +78,9 @@ void Manager::refresh() {
     }
     auto root = doc.object();
 
-    auto refreshInterval = root.value("refresh").toInt();
-    if (refreshInterval > 0) {
-        QTimer::singleShot(refreshInterval, this, &Manager::refresh);
+    auto refreshMsec = int(root.value("refresh").toDouble() * 1000);
+    if (refreshMsec > 0) {
+        QTimer::singleShot(refreshMsec, this, &Manager::refresh);
     }
 
     auto iconName = root.value("iconName").toString();
