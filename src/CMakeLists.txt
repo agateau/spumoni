@@ -33,6 +33,7 @@ target_include_directories(${APPLIB_NAME} PUBLIC
 target_link_libraries(${APPLIB_NAME}
     Qt5::Core
     Qt5::Widgets
+    KF5::Notifications
 )
 
 # Translations

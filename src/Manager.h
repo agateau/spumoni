@@ -1,10 +1,11 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include <KStatusNotifierItem>
+
 #include <QJsonArray>
 #include <QMenu>
 #include <QObject>
-#include <QSystemTrayIcon>
 
 #include <memory>
 
@@ -19,14 +20,13 @@ public:
 
 private:
     void refresh();
-    void onActivated(QSystemTrayIcon::ActivationReason reason);
+    void onActivated(const QString& reason);
     void onMenuTriggered(QAction* action);
     void onAboutToShowMenu();
 
     const std::unique_ptr<CommandRunner> mRunner;
     const QString mCommand;
-    QSystemTrayIcon mIcon;
-    QMenu mMenu;
+    KStatusNotifierItem mIcon;
     QJsonArray mPendingMenuDefinition;
 };
 

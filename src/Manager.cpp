@@ -9,6 +9,8 @@
 #include <QTimer>
 
 static constexpr char ID_PROPERTY[] = "id";
+static constexpr char PRIMARY_REASON[] = "primary";
+static constexpr char SECONDARY_REASON[] = "secondary";
 
 static QIcon loadIcon(const QString& iconName) {
     if (QIcon::hasThemeIcon(iconName)) {
@@ -49,11 +51,14 @@ static void updateMenu(QMenu* menu, const QJsonArray& actions) {
 }
 
 Manager::Manager(std::unique_ptr<CommandRunner> runner) : mRunner(std::move(runner)) {
-    mIcon.setContextMenu(&mMenu);
-
-    connect(&mIcon, &QSystemTrayIcon::activated, this, &Manager::onActivated);
-    connect(&mMenu, &QMenu::aboutToShow, this, &Manager::onAboutToShowMenu);
-    connect(&mMenu, &QMenu::triggered, this, &Manager::onMenuTriggered);
+    connect(&mIcon, &KStatusNotifierItem::activateRequested, this, [this] {
+        onActivated(PRIMARY_REASON);
+    });
+    connect(&mIcon, &KStatusNotifierItem::secondaryActivateRequested, this, [this] {
+        onActivated(SECONDARY_REASON);
+    });
+    connect(mIcon.contextMenu(), &QMenu::aboutToShow, this, &Manager::onAboutToShowMenu);
+    connect(mIcon.contextMenu(), &QMenu::triggered, this, &Manager::onMenuTriggered);
 
     refresh();
 }
@@ -77,39 +82,26 @@ void Manager::refresh() {
     auto toolTipText = root.value("toolTipText").toString();
 
     if (iconName.isEmpty()) {
-        mIcon.hide();
+        mIcon.setStatus(KStatusNotifierItem::Passive);
         return;
     }
 
-    mIcon.setIcon(loadIcon(iconName));
-    mIcon.setToolTip(toolTipText);
+    auto icon = loadIcon(iconName);
+    mIcon.setIconByPixmap(icon);
+    mIcon.setToolTip(icon, toolTipText, {});
 
     mPendingMenuDefinition = root.value("actions").toArray();
 
-    mIcon.show();
+    mIcon.setStatus(KStatusNotifierItem::Active);
 }
 
-void Manager::onActivated(QSystemTrayIcon::ActivationReason reason) {
-    QString reasonStr;
-    switch (reason) {
-    case QSystemTrayIcon::Trigger:
-    case QSystemTrayIcon::Unknown:
-    case QSystemTrayIcon::DoubleClick:
-        reasonStr = "primary";
-        break;
-    case QSystemTrayIcon::MiddleClick:
-        reasonStr = "secondary";
-        break;
-    case QSystemTrayIcon::Context:
-        return;
-    }
-
-    mRunner->detachedRun({"--activate", reasonStr});
+void Manager::onActivated(const QString& reason) {
+    mRunner->detachedRun({"--activate", reason});
 }
 
 void Manager::onAboutToShowMenu() {
     if (!mPendingMenuDefinition.empty()) {
-        updateMenu(&mMenu, mPendingMenuDefinition);
+        updateMenu(mIcon.contextMenu(), mPendingMenuDefinition);
         mPendingMenuDefinition = {};
     }
 }
