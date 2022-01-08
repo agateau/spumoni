@@ -40,6 +40,7 @@ static void initFallbackIcons() {
 
 struct Arguments {
     QString command;
+    QStringList commandArguments;
 };
 
 static Arguments parseArguments(const QStringList& arguments) {
@@ -48,12 +49,15 @@ static Arguments parseArguments(const QStringList& arguments) {
     parser.addPositionalArgument("command", "Command to run");
     parser.process(arguments);
 
-    if (parser.positionalArguments().length() != 1) {
+    if (parser.positionalArguments().length() < 1) {
         parser.showHelp(1);
     }
 
+    auto commandAndArgs = parser.positionalArguments();
+
     Arguments args;
-    args.command = parser.positionalArguments().first();
+    args.command = commandAndArgs.takeFirst();
+    args.commandArguments = commandAndArgs;
     return args;
 }
 
@@ -72,7 +76,7 @@ int main(int argc, char* argv[]) {
     loadTranslations(&app);
 
     auto args = parseArguments(app.arguments());
-    auto runner = std::make_unique<ProcessCommandRunner>(args.command);
+    auto runner = std::make_unique<ProcessCommandRunner>(args.command, args.commandArguments);
 
     Manager manager(std::move(runner));
 

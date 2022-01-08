@@ -85,8 +85,8 @@ def icon_for_code(code: str) -> str:
     return "weather-" + ICON_FOR_WWO[WWO_CODE[code]]
 
 
-def do_status():
-    wttr_url = "https://wttr.in/?format=j1"
+def do_status(city: str):
+    wttr_url = f"https://wttr.in/{city}?format=j1"
     response = urllib.request.urlopen(wttr_url)
     dct = json.loads(response.read())
     data = dct["current_condition"][0]
@@ -117,11 +117,12 @@ def main():
 
     parser.add_argument("--activate")
     parser.add_argument("--status", action="store_true")
+    parser.add_argument("city")
 
     args = parser.parse_args()
 
     if args.status:
-        return do_status()
+        return do_status(args.city)
     if args.activate:
         return do_activate(args.activate)
 

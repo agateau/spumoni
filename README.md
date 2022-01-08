@@ -1,12 +1,12 @@
-# SpumoNI
+# Spumoni
 
 Easily create StatusNotifierItem apps using any language.
 
 ## Usage
 
-    spumoni <a spumoni command>
+    spumoni <spumoni command> [<spumoni command arguments>]
 
-## SpumoNI "protocol"
+## Spumoni "protocol"
 
 ### --status
 

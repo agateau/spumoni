@@ -5,11 +5,15 @@
 #include <QJsonParseError>
 #include <QProcess>
 
-ProcessCommandRunner::ProcessCommandRunner(const QString& command) : mCommand(command) {
+ProcessCommandRunner::ProcessCommandRunner(const QString& command, const QStringList& argments)
+        : mCommand(command), mArguments(argments) {
 }
 
-QJsonDocument ProcessCommandRunner::run(const QStringList& arguments) const {
+QJsonDocument ProcessCommandRunner::run(const QStringList& arguments_) const {
     QProcess process;
+
+    auto arguments = mArguments + arguments_;
+
     // TODO: Check mCommand exists
     process.start(mCommand, arguments);
     if (!process.waitForStarted(500)) {
@@ -33,6 +37,7 @@ QJsonDocument ProcessCommandRunner::run(const QStringList& arguments) const {
     return doc;
 }
 
-void ProcessCommandRunner::detachedRun(const QStringList& arguments) const {
+void ProcessCommandRunner::detachedRun(const QStringList& arguments_) const {
+    auto arguments = mArguments + arguments_;
     QProcess::startDetached(mCommand, arguments);
 }
