@@ -15,9 +15,8 @@ usage() {
     fi
 
     cat << EOF
-Usage: $PROGNAME [OPTION ...] [foo] [bar]
-<Program description>.
-
+Usage: spumoni $PROGNAME [OPTION ...]
+An example Spumoni command.
 EOF
 
     exit 1
@@ -35,6 +34,7 @@ status() {
     "actions": [
         {
             "id": "hello",
+            "iconName": "face-angel",
             "text": "Hello"
         },
         {
