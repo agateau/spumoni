@@ -95,6 +95,13 @@ void Manager::refresh() {
     mIcon.setIconByPixmap(icon);
     mIcon.setToolTip(icon, toolTipText, {});
 
+    iconName = root.value("overlayIconName").toString();
+    if (iconName.isEmpty()) {
+        mIcon.setOverlayIconByPixmap({});
+    } else {
+        mIcon.setOverlayIconByPixmap(loadIcon(iconName));
+    }
+
     mPendingMenuDefinition = root.value("actions").toArray();
 
     mIcon.setStatus(KStatusNotifierItem::Active);

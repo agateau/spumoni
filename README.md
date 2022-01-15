@@ -13,6 +13,7 @@ Easily create StatusNotifierItem apps using any language.
 ```json
 {
     "iconName": "",
+    "overlayIconName": "",
     "text": "",
     "refresh": double // interval in seconds, 0 = no refresh
     "actions": [
